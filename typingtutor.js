@@ -1,5 +1,4 @@
 (function($){
-	var iframe;
 	//there should be 2 input elements - 1 for text and one for textarea
 	$.fn.typingtutor = function(options) {
 		//todo: validate input
@@ -31,6 +30,10 @@
 		
 		var typingText = textBody[0].firstChild;
 		
+		function colorText() {
+			$(textFrame).contents()[0].execCommand('backColor', false, "#C9FFE0");
+		}
+		
 		typingBody.keydown(function(event){
 			if(event.keyCode === 8) {
 				//backspace - unstyle last styled character
@@ -46,7 +49,7 @@
 					textRange.setStart(typingText, 0);
 					textRange.setEnd(typingText, currentTypingPosition-1);
 					textSelection.addRange(textRange);
-					$(textFrame).contents()[0].execCommand('bold');
+					colorText();
 				}
 			} else {
 				//a letter has been typed
@@ -58,7 +61,7 @@
 				//todo: IE?
 				textSelection.addRange(textRange);
 				//color the range
-				$(textFrame).contents()[0].execCommand('bold');
+				colorText();
 			}
 			textSelection.removeAllRanges();
 		});
