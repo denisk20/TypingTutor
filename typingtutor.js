@@ -19,16 +19,21 @@
 		var textSelection = $(textFrame).contents()[0].getSelection();
 		//todo will need error range too
 		var textRange = $(textFrame).contents()[0].createRange();
-		//hopefully this works in all browsers too...
-		textRange.setStart($(textFrame).contents().find('body')[0].firstChild, 0);
 		
 		var textRangeEnd = 0;
 		
+		var typingText = $(textFrame).contents().find('body')[0].firstChild;
+		//hopefully this works in all browsers too...
 		$(typingFrame).contents().find('body').keypress(function(){
 			//todo for testing only
-			textRange.setEnd($(textFrame).contents().find('body')[0].firstChild, ++textRangeEnd);
-			textSelection.removeAllRanges();
+			textRange.setStart(typingText, textRangeEnd);
+			textRange.setEnd(typingText, textRangeEnd + 1);
+			//textRangeEnd++;
+			//applying the range
 			textSelection.addRange(textRange);
+			//coloring the range
+			$(textFrame).contents()[0].execCommand('bold');
+			textSelection.removeAllRanges();
 		});
 	};
 }(jQuery));
