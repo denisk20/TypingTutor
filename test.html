@@ -9,12 +9,7 @@
 <body>
 	<p>This is text to type</p>
 	<textarea rows="3" cols="30"></textarea>
-	<iframe id="frame">This is text</iframe>
 	<script type="text/javascript">
-		frame.document.designMode="on";
-		frame.document.open();
-		frame.document.write('this is text');
-		frame.document.close();
 		$('p, textarea').typingtutor();
 	</script>
 </body>
