@@ -1,7 +1,7 @@
 (function($){
 	var iframe;
 	//there should be 2 input elements - 1 for text and one for textarea
-	$.fn.typingtutor = function(options){
+	$.fn.typingtutor = function(options) {
 		//todo: validate input
 		var settings = $.extend({}, options);
 		//todo: make order independent
@@ -12,29 +12,57 @@
 		$(text).replaceWith(textFrame);
 		$(textarea).replaceWith(typingFrame);
 
-		$(textFrame).contents().find('body').append($(text).text());
+		var textBody = $(textFrame).contents().find('body');
+		var typingBody = $(typingFrame).contents().find('body');
+		
+		var originalText = $(text).text();
+		
+		textBody.append(originalText);
 		$(typingFrame).contents()[0].designMode="on";
 		$(textFrame).contents()[0].designMode="on";
 		//hopefully this works even though I don't obtain selection from window, but rather from document
+		//todo: IE?
 		var textSelection = $(textFrame).contents()[0].getSelection();
 		//todo will need error range too
+		//todo: IE?
 		var textRange = $(textFrame).contents()[0].createRange();
 		
 		var textRangeEnd = 0;
 		
-		var typingText = $(textFrame).contents().find('body')[0].firstChild;
-		//hopefully this works in all browsers too...
-		$(typingFrame).contents().find('body').keypress(function(){
-			//todo for testing only
-			textRange.setStart(typingText, textRangeEnd);
-			textRange.setEnd(typingText, textRangeEnd + 1);
-			//textRangeEnd++;
-			//applying the range
-			textSelection.addRange(textRange);
-			//coloring the range
-			$(textFrame).contents()[0].execCommand('bold');
+		var typingText = textBody[0].firstChild;
+		
+		typingBody.keydown(function(event){
+			if(event.keyCode === 8) {
+				//backspace - unstyle last styled character
+				
+				//todo: WARN: this does not take into account current line
+				var currentTypingPosition = typingBody.text().length;
+				if(currentTypingPosition > 0) {
+					textBody[0].innerHTML = "";
+					textBody.text(originalText);
+					
+					typingText = textBody[0].firstChild;
+					
+					textRange.setStart(typingText, 0);
+					textRange.setEnd(typingText, currentTypingPosition-1);
+					textSelection.addRange(textRange);
+					$(textFrame).contents()[0].execCommand('bold');
+				}
+			} else {
+				//a letter has been typed
+				//todo for testing only
+				//todo: IE?
+				textRange.setStart(typingText, 0);
+				textRange.setEnd(typingText, 1);
+				//applying the range
+				//todo: IE?
+				textSelection.addRange(textRange);
+				//color the range
+				$(textFrame).contents()[0].execCommand('bold');
+			}
 			textSelection.removeAllRanges();
 		});
+		
 	};
 }(jQuery));
 jQuery.fn.selectText = function() {
