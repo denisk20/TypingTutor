@@ -1,86 +1,41 @@
-(function($){
-	//there should be 2 input elements - 1 for text and one for textarea
-	$.fn.typingtutor = function(options) {
-		//todo: validate input
-		var settings = $.extend({}, options);
-		//todo: make order independent
-		var text = this[0];
-		var textarea = this[1];
-		var textFrame = document.createElement('iframe');
-		var typingFrame = document.createElement('iframe');
-		$(text).replaceWith(textFrame);
-		$(textarea).replaceWith(typingFrame);
+(function($) {
+    //there should be 2 input elements - 1 for text and one for textarea
+    $.fn.typingtutor = function(options) {
+	//todo: validate input
+	var settings = $.extend({}, options);
+	//todo: make order independent
+	var text = this[0];
+	var textarea = this[1];
+	var originalText = $(text).text();
+	
+	text.innerHTML = "";
+	var letters = []
+	for(var i = 0; i < originalText.length; i++){
+	    var letter = $('<span>' + originalText.charAt(i) + '</span>');
+	    $(text).append(letter);
+	    letters[i] = letter;
+	}
+	var typingFrame = document.createElement('iframe');
+	$(textarea).replaceWith(typingFrame);
 
-		var textBody = $(textFrame).contents().find('body');
-		var typingBody = $(typingFrame).contents().find('body');
-		
-		var originalText = $(text).text();
-		
-		textBody.append(originalText);
-		$(typingFrame).contents()[0].designMode="on";
-		$(textFrame).contents()[0].designMode="on";
-		//hopefully this works even though I don't obtain selection from window, but rather from document
-		//todo: IE?
-		var textSelection = $(textFrame).contents()[0].getSelection();
-		//todo will need error range too
-		//todo: IE?
-		var textRange = $(textFrame).contents()[0].createRange();
-		
-		var textRangeEnd = 0;
-		
-		var typingText = textBody[0].firstChild;
-		
-		function colorText() {
-			$(textFrame).contents()[0].execCommand('backColor', false, "#C9FFE0");
+	var typingBody = $(typingFrame).contents().find('body');
+	var typingDocument = $(typingFrame).contents()[0];
+
+	typingDocument.designMode = "on";
+
+	typingBody.keydown(function(event) {
+	    //todo: WARN: this does not take into account current line
+	    var currentTypingPosition = typingBody.text().length;
+	    if (event.keyCode === 8) {
+		//backspace - unstyle last styled character
+
+		if (currentTypingPosition > 0) {
+		    letters[currentTypingPosition-1].css('background-color', '');
 		}
-		
-		typingBody.keydown(function(event){
-			if(event.keyCode === 8) {
-				//backspace - unstyle last styled character
-				
-				//todo: WARN: this does not take into account current line
-				var currentTypingPosition = typingBody.text().length;
-				if(currentTypingPosition > 0) {
-					textBody[0].innerHTML = "";
-					textBody.text(originalText);
-					
-					typingText = textBody[0].firstChild;
-					
-					textRange.setStart(typingText, 0);
-					textRange.setEnd(typingText, currentTypingPosition-1);
-					textSelection.addRange(textRange);
-					colorText();
-				}
-			} else {
-				//a letter has been typed
-				//todo for testing only
-				//todo: IE?
-				textRange.setStart(typingText, 0);
-				textRange.setEnd(typingText, 1);
-				//applying the range
-				//todo: IE?
-				textSelection.addRange(textRange);
-				//color the range
-				colorText();
-			}
-			textSelection.removeAllRanges();
-		});
-		
-	};
+	    } else {
+		//a letter has been typed
+		letters[currentTypingPosition].css('background-color', '#C9FFE0');
+	    }
+	});
+    };
 }(jQuery));
-jQuery.fn.selectText = function() {
-    var range, selection;
-    if (document.body.createTextRange) {
-        range = document.body.createTextRange();
-        range.moveToElementText(this[0]);
-        range.select();
-    } else if (window.getSelection) {
-        selection = window.getSelection();
-        range = document.createRange();
-        range.selectNodeContents(this[0]);
-//        range.setStart(this[0], 2);
-//        range.setEnd(this[0],4);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-};
