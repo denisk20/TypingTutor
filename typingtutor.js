@@ -8,59 +8,61 @@
 	var textarea = this[1];
 
 	var originalText = $(text).text();
-	
+
+	$(text).css('font-family', '"Courier New", Courier, monospace');
 	text.innerHTML = "";
 	var letters = [];
-	for(var i = 0; i < originalText.length; i++){
+	for (var i = 0; i < originalText.length; i++) {
 	    var letter = $('<span>' + originalText.charAt(i) + '</span>');
 	    $(text).append(letter);
 	    letters[i] = letter;
 	}
 
 	drawCursor(0);
-	
-	function drawTextBackground(position){
+
+	function drawTextBackground(position) {
 	    letters[position].css('background-color', '#C9FFE0');
 	}
-	function clearTextBackground(position){
-	    letters[position].css('background-color', '');
+	function clearTextBackground(position) {
+	    letters[position].css('background-color', 'white');
 	}
-	function drawCursor(position){
+	function drawCursor(position) {
 	    letters[position].css('background-color', 'green');
 	}
-	function highlightError(position){
+	function highlightError(position) {
 	    letters[position].css('background-color', 'red');
 	}
-	function inputCorrect(position, code){
-	    return originalText.charAt(position) === String.fromCharCode(code);
-	}
 	$(textarea).keypress(function(e) {
+	    if (e.keyCode === 8) {
+		return;
+	    }
 	    //todo: WARN: this does not take into account current line
 	    var currentTypingPosition = $(textarea).val().length;
 	    //a letter has been typed
 	    //if(originalText.charCodeAt(currentTypingPosition) === e.keyCode)
-	    if(inputCorrect(currentTypingPosition, e.which)) {
+	    if (originalText.substring(0, currentTypingPosition + 1) === $(textarea).val() + String.fromCharCode(e.which)) {
 		drawTextBackground(currentTypingPosition);
 		drawCursor(currentTypingPosition + 1);
 	    } else {
 		highlightError(currentTypingPosition);
 	    }
-	    
 	});
-	$(textarea).keydown(function(e){
-	    if(e.keyCode === 8){
+	$(textarea).keydown(function(e) {
+	    if (e.keyCode === 8) {
 		//backspace - unstyle last styled character
 		var currentTypingPosition = $(textarea).val().length;
-		clearTextBackground(currentTypingPosition);
-		if (currentTypingPosition > 1) {
-		    clearTextBackground(currentTypingPosition - 1);
-		    if(originalText.charAt(currentTypingPosition - 2) === $(textarea).val().charAt(currentTypingPosition - 2)) {
-			drawCursor(currentTypingPosition - 1);
+		if (currentTypingPosition > 0) {
+		    clearTextBackground(currentTypingPosition);
+		    if (currentTypingPosition > 1) {
+			clearTextBackground(currentTypingPosition - 1);
+			if (originalText.substring(0, currentTypingPosition - 1) === $(textarea).val().substring(0, currentTypingPosition - 1)) {
+			    drawCursor(currentTypingPosition - 1);
+			} else {
+			    highlightError(currentTypingPosition - 2);
+			}
 		    } else {
-			highlightError(currentTypingPosition - 2);
+			drawCursor(0);
 		    }
-		} else {
-		    drawCursor(0);
 		}
 	    }
 	});
