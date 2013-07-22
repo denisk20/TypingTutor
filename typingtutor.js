@@ -63,13 +63,25 @@
 			if(e.keyCode === 8 || e.keyCode === 13) {
 				return;
 			}
+			
 			//a letter has been typed
 			var lastLine = getLastLine();
 			var currentTypingPosition = lastLine.length;
+			if(currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
+				if(e.which === 32){
+					//trigger enter event
+					e.preventDefault();
+					e = new jQuery.Event('keydown');
+					e.which = e.keyCode = 13;
+					$(textarea).trigger(e);
+					
+					$(textarea).val($(textarea).val() + '\n')
+					return;
+				}
+			}
 			if(currentTypingPosition > originalTexts[currentLinePosition].length - 1) {
 				return;
 			}
-		
 			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastLine + String.fromCharCode(e.which)) {
 				drawTextBackground(currentLinePosition, currentTypingPosition);
 				drawCursor(currentLinePosition, currentTypingPosition + 1);
