@@ -8,15 +8,19 @@
 </head>
 <body>
 	<div>
-		<p>aa</p>
+		<p>aaaaaaaaaaaaaaaaaaaaaaaa</p>
 		<p>Another line</p>
 		<p>And another one</p>
 	</div>
 	
-	<textarea cols="40" rows="6"></textarea>
+	<textarea cols="160" rows="6"></textarea>
 	
 	<script type="text/javascript">
-		$('div, textarea').typingtutor();
+		$('div, textarea').typingtutor({
+			speedTrackCallback: function(speed){
+				console.log(speed);
+			}
+		});
 	</script>
 </body>
 </html>

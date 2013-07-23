@@ -2,7 +2,9 @@
 	//there should be 2 input elements - 1 for text and one for textarea
 	$.fn.typingtutor = function(options) {
 		//todo: validate input
-		var settings = $.extend({}, options);
+		var settings = $.extend({
+			speedInterval: 5
+		}, options);
 		//todo: make order independent
 		var text = this[0];
 		var textarea = this[1];
@@ -45,6 +47,7 @@
 		}
 		function highlightError(line, position) {
 			lineLetters[line][position].css('background-color', 'red');
+			clearSpeed();
 		}
 		function getLines() {
 			var currentText = textarea.value;
@@ -59,14 +62,27 @@
 			return allLines[allLines.length - 1];
 		}
 		
+		//speed interval
+		var si = settings.speedInterval;
+		//last correct date
+		var lcd;
+		//times
+		var tms = [];
+		//speed callback
+		var scb = settings.speedTrackCallback;
+		function clearSpeed(){
+			lcd = null;
+			tms.length = 0;
+		}
+		var millisInMinute = 1000 * 60;
 		$(textarea).keypress(function(e) {
 			if(e.keyCode === 8 || e.keyCode === 13) {
 				return;
 			}
 			
 			//a letter has been typed
-			var lastLine = getLastLine();
-			var currentTypingPosition = lastLine.length;
+			var lastTypedLine = getLastLine();
+			var currentTypingPosition = lastTypedLine.length;
 			if(currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
 				if(e.which === 32){
 					//trigger enter event
@@ -82,9 +98,33 @@
 			if(currentTypingPosition > originalTexts[currentLinePosition].length - 1) {
 				return;
 			}
-			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastLine + String.fromCharCode(e.which)) {
+			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
 				drawTextBackground(currentLinePosition, currentTypingPosition);
 				drawCursor(currentLinePosition, currentTypingPosition + 1);
+				if(scb){
+					//correct date
+					var cd = new Date().getTime();
+					if(lcd){
+						//recording current time
+						var t = cd - lcd;
+						tms.push(t);
+						if(tms.length === si){
+							//calculate average and call speed feedback
+							var tot = 0;
+							$.each(tms, function(i, val){
+								tot += val;
+							});
+							//average speed of typing one character
+							var avg = tot / tms.length;
+							
+							var speed = millisInMinute / avg;
+							scb.call(this, speed);
+							
+							clearSpeed();
+						}
+					}
+					lcd = cd;
+				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
 			}
