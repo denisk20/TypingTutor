@@ -8,9 +8,10 @@
 </head>
 <body>
 	<div>
-		<p>aaaaaaaaaaaaaaaaaaaaaaaa</p>
-		<p>Another line</p>
-		<p>And another one</p>
+		<p>aaaa</p>
+		<p>aaaa</p>
+		<p>aaaa</p>
+		<p>aaaa</p>
 	</div>
 	
 	<textarea cols="160" rows="6"></textarea>
@@ -19,6 +20,9 @@
 		$('div, textarea').typingtutor({
 			speedTrackCallback: function(speed){
 				console.log(speed);
+			},
+			finishCallback: function(speed){
+			    console.log('finished: ' + speed);
 			}
 		});
 	</script>

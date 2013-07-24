@@ -14,9 +14,11 @@
 		var lines = $(text).find('p');
 		var originalTexts = [];
 		var lineLetters = [];
+		var totalCharacters = 0;
 		for (var i = 0; i < lines.length; i++) {
 			lines[i] = $(lines[i]);
 			var lineText = lines[i].text();
+			totalCharacters += lineText.length;
 			lines[i][0].innerHTML = '';
 			originalTexts[i] = lineText;
 			lineLetters[i] = [];
@@ -31,7 +33,8 @@
 			lines[i].append(lastLetter);
 			originalTexts[i] += ' ';
 		}
-
+		totalCharacters -= 1; //substracting 1 for the very first hit
+		
 		$(text).css('font-family', '"Courier New", Courier, monospace');
 
 		drawCursor(0, 0);
@@ -70,12 +73,18 @@
 		var tms = [];
 		//speed callback
 		var scb = settings.speedTrackCallback;
+		//finish callback
+		var fcb = settings.finishCallback;
 		function clearSpeed(){
 			lcd = null;
 			tms.length = 0;
 		}
 		var millisInMinute = 1000 * 60;
+		var startTime = null;
 		$(textarea).keypress(function(e) {
+			if(!startTime){
+			    startTime = new Date().getTime();
+			}
 			if(e.keyCode === 8 || e.keyCode === 13) {
 				return;
 			}
@@ -115,15 +124,29 @@
 								tot += val;
 							});
 							//average speed of typing one character
-							var avg = tot / tms.length;
+							var avg = tot / (tms.length);
 							
 							var speed = millisInMinute / avg;
-							scb.call(this, speed);
+							scb.call(this, parseInt(speed));
 							
-							clearSpeed();
+							tms.length = 0;
 						}
 					}
+					
 					lcd = cd;
+				}
+				//check if the whole text is typed
+				//at this point we are sure that the typed symbol was correct
+				//if we're at the end of last line - fire 'finishedcallback'
+				if(fcb){
+				    if(originalTexts.length - 1 === currentLinePosition && originalTexts[originalTexts.length - 1].length - 2/*substracting last whitespace*/ === currentTypingPosition){
+					var time = new Date().getTime() - startTime;
+					var overallSpeed = (totalCharacters / time) * millisInMinute;
+					fcb.call(this, parseInt(overallSpeed));
+					$(textarea).attr('disabled', true);
+					$(textarea).unbind('keypress');
+					$(textarea).unbind('keydown');
+				    }
 				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
@@ -166,7 +189,6 @@
 					} else {
 						highlightError(currentLinePosition, currentTypingPosition - 2);
 					}
-					
 				}
 			} else if(e.keyCode === 13) {
 				//validate current line
