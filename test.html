@@ -15,6 +15,7 @@
 	
 	<textarea cols="160" rows="6"></textarea>
 	<div id="csp"></div>
+	<div id ="err" style="color: red"></div>
 	<script type="text/javascript">
 		$('div, textarea').typingtutor({
 			speedTrackCallback: function(speed){
@@ -22,6 +23,9 @@
 			},
 			finishCallback: function(speed){
 			    $('#csp').text('Average speed was ' + speed + ' characters per minute');
+			},
+			errorCallback: function(errorCount){
+				$('#err').text('Errors: ' + errorCount);
 			}
 		});
 	</script>

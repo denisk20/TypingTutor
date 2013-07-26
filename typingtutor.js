@@ -9,6 +9,7 @@
 		var text = this[0];
 		var textarea = this[1];
 		$(textarea).css('resize', 'none');
+		$(textarea).attr('onpaste', 'return false;');
 
 		var currentLinePosition = 0;
 		var lines = $(text).find('p');
@@ -81,6 +82,11 @@
 		}
 		var millisInMinute = 1000 * 60;
 		var startTime = null;
+		
+		//error count
+		var ec = 0;
+		var eh = settings.errorCallback;
+		
 		$(textarea).keypress(function(e) {
 			if(!startTime) {
 				startTime = new Date().getTime();
@@ -152,6 +158,10 @@
 				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
+				ec++;
+				if(eh){
+					eh.call(this, ec);
+				}
 			}
 		});
 		$(textarea).keydown(function(e) {
