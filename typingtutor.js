@@ -143,6 +143,8 @@
 					var time = new Date().getTime() - startTime;
 					var overallSpeed = (totalCharacters / time) * millisInMinute;
 					fcb.call(this, parseInt(overallSpeed));
+					//append last typed word to the textarea before disabling it
+					$(textarea).val($(textarea).val() + String.fromCharCode(e.which));
 					$(textarea).attr('disabled', true);
 					$(textarea).unbind('keypress');
 					$(textarea).unbind('keydown');
