@@ -3,7 +3,7 @@
 	$.fn.typingtutor = function(options) {
 		//todo: validate input
 		var settings = $.extend({
-			speedInterval: 5
+			speedInterval: 4
 		}, options);
 		//todo: make order independent
 		var text = this[0];
@@ -34,7 +34,7 @@
 			originalTexts[i] += ' ';
 		}
 		totalCharacters -= 1; //substracting 1 for the very first hit
-		
+
 		$(text).css('font-family', '"Courier New", Courier, monospace');
 
 		drawCursor(0, 0);
@@ -64,7 +64,7 @@
 			var allLines = getLines();
 			return allLines[allLines.length - 1];
 		}
-		
+
 		//speed interval
 		var si = settings.speedInterval;
 		//last correct date
@@ -75,31 +75,31 @@
 		var scb = settings.speedTrackCallback;
 		//finish callback
 		var fcb = settings.finishCallback;
-		function clearSpeed(){
+		function clearSpeed() {
 			lcd = null;
 			tms.length = 0;
 		}
 		var millisInMinute = 1000 * 60;
 		var startTime = null;
 		$(textarea).keypress(function(e) {
-			if(!startTime){
-			    startTime = new Date().getTime();
+			if(!startTime) {
+				startTime = new Date().getTime();
 			}
 			if(e.keyCode === 8 || e.keyCode === 13) {
 				return;
 			}
-			
+
 			//a letter has been typed
 			var lastTypedLine = getLastLine();
 			var currentTypingPosition = lastTypedLine.length;
 			if(currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
-				if(e.which === 32){
+				if(e.which === 32) {
 					//trigger enter event
 					e.preventDefault();
 					e = new jQuery.Event('keydown');
 					e.which = e.keyCode = 13;
 					$(textarea).trigger(e);
-					
+
 					$(textarea).val($(textarea).val() + '\n')
 					return;
 				}
@@ -110,45 +110,45 @@
 			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
 				drawTextBackground(currentLinePosition, currentTypingPosition);
 				drawCursor(currentLinePosition, currentTypingPosition + 1);
-				if(scb){
+				if(scb) {
 					//correct date
 					var cd = new Date().getTime();
-					if(lcd){
+					if(lcd) {
 						//recording current time
 						var t = cd - lcd;
 						tms.push(t);
-						if(tms.length === si){
+						if(tms.length === si) {
 							//calculate average and call speed feedback
 							var tot = 0;
-							$.each(tms, function(i, val){
+							$.each(tms, function(i, val) {
 								tot += val;
 							});
 							//average speed of typing one character
 							var avg = tot / (tms.length);
-							
+
 							var speed = millisInMinute / avg;
 							scb.call(this, parseInt(speed));
-							
+
 							tms.length = 0;
 						}
 					}
-					
+
 					lcd = cd;
 				}
 				//check if the whole text is typed
 				//at this point we are sure that the typed symbol was correct
 				//if we're at the end of last line - fire 'finishedcallback'
-				if(fcb){
-				    if(originalTexts.length - 1 === currentLinePosition && originalTexts[originalTexts.length - 1].length - 2/*substracting last whitespace*/ === currentTypingPosition){
-					var time = new Date().getTime() - startTime;
-					var overallSpeed = (totalCharacters / time) * millisInMinute;
-					fcb.call(this, parseInt(overallSpeed));
-					//append last typed word to the textarea before disabling it
-					$(textarea).val($(textarea).val() + String.fromCharCode(e.which));
-					$(textarea).attr('disabled', true);
-					$(textarea).unbind('keypress');
-					$(textarea).unbind('keydown');
-				    }
+				if(fcb) {
+					if(originalTexts.length - 1 === currentLinePosition && originalTexts[originalTexts.length - 1].length - 2/*substracting last whitespace*/ === currentTypingPosition) {
+						var time = new Date().getTime() - startTime;
+						var overallSpeed = (totalCharacters / time) * millisInMinute;
+						fcb.call(this, parseInt(overallSpeed));
+						//append last typed word to the textarea before disabling it
+						$(textarea).val($(textarea).val() + String.fromCharCode(e.which));
+						$(textarea).attr('disabled', true);
+						$(textarea).unbind('keypress');
+						$(textarea).unbind('keydown');
+					}
 				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
@@ -178,7 +178,7 @@
 				} else {
 					//we may have jumped to a previous line
 					//Remove cursor from previous line
-					if(currentLinePosition === 0){
+					if(currentLinePosition === 0) {
 						//we're at the beginning of the first line
 						return;
 					}
@@ -204,7 +204,7 @@
 				drawCursor(currentLinePosition, 0);
 			}
 		});
-		
+
 		$(textarea).focus();
 	};
 }(jQuery));

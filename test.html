@@ -8,18 +8,20 @@
 </head>
 <body>
 	<div>
-		<p>aaaa</p>
+		<p>this is a text to type</p>
+		<p>this is a text to type</p>
+		<p>this is a text to type</p>
 	</div>
 	
 	<textarea cols="160" rows="6"></textarea>
-	
+	<div id="csp"></div>
 	<script type="text/javascript">
 		$('div, textarea').typingtutor({
 			speedTrackCallback: function(speed){
-				console.log(speed);
+				$('#csp').text('Current speed is ' + speed + ' characters per minute');
 			},
 			finishCallback: function(speed){
-			    console.log('finished: ' + speed);
+			    $('#csp').text('Average speed was ' + speed + ' characters per minute');
 			}
 		});
 	</script>
