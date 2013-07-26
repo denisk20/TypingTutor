@@ -53,9 +53,16 @@
 			lineLetters[line][position].css('background-color', 'red');
 			clearSpeed();
 		}
+		function endsWith(str, suffix) {
+			return str.indexOf(suffix, str.length - suffix.length) !== -1;
+		}
 		function getLines() {
 			var currentText = textarea.value;
 			var allLines = currentText.split(/\n/g);
+			if($.browser.name = 'msie' && endsWith(currentText, '\n')) {
+				//todo test for ie > 8
+				allLines.push('');
+			}
 			return allLines
 		}
 		function getLinesCount() {
@@ -99,6 +106,7 @@
 			var lastTypedLine = getLastLine();
 			var currentTypingPosition = lastTypedLine.length;
 			if(currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
+				//at the end of the line
 				if(e.which === 32) {
 					//trigger enter event
 					e.preventDefault();
@@ -114,6 +122,7 @@
 				return;
 			}
 			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
+				//a correct letter is about to be pressed
 				drawTextBackground(currentLinePosition, currentTypingPosition);
 				drawCursor(currentLinePosition, currentTypingPosition + 1);
 				if(scb) {
@@ -205,7 +214,7 @@
 			} else if(e.keyCode === 13) {
 				//validate current line
 				var lastLine = getLastLine();
-				if(originalTexts[currentLinePosition].trim() !== lastLine) {
+				if($.trim(originalTexts[currentLinePosition]) !== lastLine) {
 					highlightError(currentLinePosition, lastLine.length - 1);
 				} else {
 					drawTextBackground(currentLinePosition, lastLine.length);
