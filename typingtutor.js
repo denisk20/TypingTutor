@@ -40,24 +40,29 @@
 
 		drawCursor(0, 0);
 
+		var textBgColor = 'rgb(201, 255, 224)';
+		var whiteColor = 'rgb(255, 255, 255)';
+		var cursorColor = 'rgb(198, 222, 162)';
+		var errorColor = 'rgb(255, 97, 136)';
+		
 		function drawTextBackground(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', '#C9FFE0');
+				lineLetters[line][position].css('background-color', textBgColor);
 			}
 		}
 		function clearTextBackground(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', 'white');
+				lineLetters[line][position].css('background-color', whiteColor);
 			}
 		}
 		function drawCursor(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', '#C6DEA2');
+				lineLetters[line][position].css('background-color', cursorColor);
 			}
 		}
 		function highlightError(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', 'red');
+				lineLetters[line][position].css('background-color', errorColor);
 			}
 			clearSpeed();
 			isError = true;
@@ -72,11 +77,11 @@
 		function getLines() {
 			var currentText = textarea.value;
 			var allLines = currentText.split(/\n/g);
-			if ($.browser.name = 'msie' && endsWith(currentText, '\n')) {
+			if ($.browser.name === 'msie' && endsWith(currentText, '\n')) {
 				//todo test for ie > 8
 				allLines.push('');
 			}
-			return allLines
+			return allLines;
 		}
 		function getLinesCount() {
 			return getLines().length;
@@ -131,7 +136,7 @@
 					e.which = e.keyCode = 13;
 					$(textarea).trigger(e);
 
-					$(textarea).val($(textarea).val() + '\n')
+					$(textarea).val($(textarea).val() + '\n');
 					return;
 				}
 			}
@@ -176,7 +181,7 @@
 						var time = new Date().getTime() - startTime;
 						var overallSpeed = (totalCharacters / time) * millisInMinute;
 						fcb.call(this, parseInt(overallSpeed));
-						//append last typed word to the textarea before disabling it
+						//append last typed char to the textarea before disabling it
 						$(textarea).val($(textarea).val() + String.fromCharCode(e.which));
 						$(textarea).attr('disabled', true);
 						$(textarea).unbind('keypress');
@@ -220,14 +225,14 @@
 						return;
 					}
 					if(! originalTexts[currentLinePosition]){
-						return
+						return;
 					}
 
 					clearTextBackground(currentLinePosition, 0);
 					currentLinePosition--;
 					var currentTypedLine = getLines()[currentLinePosition];
 					currentTypingPosition = currentTypedLine.length + 1; //adding one for space at the end
-					if (originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === currentTypedLine.substring(0, currentTypingPosition - 1)) {
+					if (checkInput(currentTypedLine, currentLinePosition, currentTypingPosition)) {
 						drawCursor(currentLinePosition, currentTypingPosition - 1);
 					} else {
 						highlightError(currentLinePosition, currentTypingPosition - 2);
@@ -249,6 +254,31 @@
 			}
 		});
 
+		/**
+		 * Checks if last line was correct up to currentTypingPosition
+		 */
+		function checkInput(lastLine, currentLinePosition, currentTypingPosition){
+			return originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1);
+		}
+		
+		$(textarea).keyup(function(e){
+			//var t1 = new Date().getTime();
+			//clear backgrounds of of all characters which are beyond current typing point
+			var lastLine = getLastLine();
+			var currentTypingPosition = lastLine.length;
+			if(currentTypingPosition >= lineLetters[currentLinePosition].length){
+				return;
+			}
+			//adding one for cursor
+			for(var i = currentTypingPosition + 1; i < lineLetters[currentLinePosition].length; i++){
+				clearTextBackground(currentLinePosition, i);
+			}
+			//we don't want to replace errors with cursor
+			if (checkInput(lastLine, currentLinePosition, currentTypingPosition)) {
+				drawCursor(currentLinePosition, currentTypingPosition);
+			}
+			//console.log('KeyUp in: ' + (new Date().getTime() - t1));
+		});
 		$(textarea).focus();
 	};
 }(jQuery));
