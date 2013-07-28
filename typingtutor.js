@@ -116,7 +116,7 @@
 		var eh = settings.errorCallback;
 
 		var isError = false;
-		$(textarea).keypress(function(e) {
+		var keyPress = function(e) {
 			if (!startTime) {
 				startTime = new Date().getTime();
 			}
@@ -190,13 +190,14 @@
 						$(textarea).attr('disabled', true);
 						$(textarea).unbind('keypress');
 						$(textarea).unbind('keydown');
+						$(textarea).unbind('keyup');
 					}
 				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
 			}
-		});
-		$(textarea).keydown(function(e) {
+		};
+		var keyDown = function(e) {
 			if (e.keyCode === 8) {
 				//backspace - unstyle last styled character
 				var lastLine = getLastLine();
@@ -256,16 +257,8 @@
 				currentLinePosition++;
 				drawCursor(currentLinePosition, 0);
 			}
-		});
-
-		/**
-		 * Checks if last line was correct up to currentTypingPosition
-		 */
-		function checkInput(lastLine, currentLinePosition, currentTypingPosition){
-			return originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1);
-		}
-		
-		$(textarea).keyup(function(e){
+		};
+		var keyUp = function(e){
 			//var t1 = new Date().getTime();
 			//clear backgrounds of of all characters which are beyond current typing point
 			var lastLine = getLastLine();
@@ -282,7 +275,54 @@
 				drawCursor(currentLinePosition, currentTypingPosition);
 			}
 			//console.log('KeyUp in: ' + (new Date().getTime() - t1));
-		});
+		};
+
+		$(textarea).keypress(keyPress);
+		$(textarea).keydown(keyDown);
+		$(textarea).keyup(keyUp);
+
+		/**
+		 * Checks if last line was correct up to currentTypingPosition
+		 */
+		function checkInput(lastLine, currentLinePosition, currentTypingPosition){
+			return originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1);
+		}
 		$(textarea).focus();
+		
+		//resulting object
+		var res = {};
+		res.restart = function(){
+			//clear backgrounds of all texts
+			$.each(lineLetters, function(i, line){
+				$.each(line, function(j, letter){
+					letter.css('background-color', whiteColor);
+				});
+			});
+			drawCursor(0, 0);
+
+			currentLinePosition = 0;
+
+			$(textarea).val('').attr('disabled', false).focus();
+
+			ec = 0;
+
+			if (eh) {
+				eh.call(this, ec);
+			}
+
+			isError = false;
+			
+			if (scb) {
+				scb.call(this, 0);
+			}
+			clearSpeed();
+			startTime = null;
+
+			$(textarea).keypress(keyPress);
+			$(textarea).keydown(keyDown);
+			$(textarea).keyup(keyUp);
+		}
+		
+		return res;
 	};
 }(jQuery));
