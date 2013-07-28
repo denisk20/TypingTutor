@@ -60,16 +60,19 @@
 				lineLetters[line][position].css('background-color', cursorColor);
 			}
 		}
-		function highlightError(line, position) {
-			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', errorColor);
-			}
-			clearSpeed();
+		function increaseErrorCount(){
 			isError = true;
 			ec++;
 			if (eh) {
 				eh.call(this, ec);
 			}
+		}
+		function highlightError(line, position) {
+			if (lineLetters[line] && lineLetters[line][position]) {
+				lineLetters[line][position].css('background-color', errorColor);
+			}
+			clearSpeed();
+			increaseErrorCount();
 		}
 		function endsWith(str, suffix) {
 			return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -141,6 +144,7 @@
 				}
 			}
 			if (currentTypingPosition > originalTexts[currentLinePosition].length - 1) {
+				increaseErrorCount();
 				return;
 			}
 			if (originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
