@@ -1,13 +1,49 @@
-TypingTutor
-===========
+# TypingTutor
 
 JQuery plugin which allows to create typing tutor UI:
 
 ![TypingTutor](http://s14.postimg.org/x9q5aimvl/type.png)
 
-Source elements are expected to look like that:
+Tested on jQuery 1.10.2, but should work on earlier versions as well.
+
+Depends on [jquer.browser.js](http://jquery.thewikies.com/browser)
+
+## Usage
+Expects 2 elements to be present - one for text source, one for typing area (order matters):
+```javascript
+$('#src, #typingarea').typingtutor();
+```
+### Text source
+Text source should be an element 
+(`<div>`, `<span>`) with nested `<p>` elements for each line of text input:
+````html
+<div id='#src'>
+    <p>First line of text to type</p>
+    <p>Second line of text to type</p>
+</div>
+```
+### Typing area
+A typing area should be a simple textarea:
 ```html
-  <div id='orig'>
+<textarea id='typingarea' cols='100' rows='6'></textarea>
+```
+It's a good idea to make textareas (cols and rows attributes) approximately the same size as input text size.
+
+## Acceptable Options
+```javascript
+speedInterval
+```
+Determines how frequent current speed snapshots will be made. Counts continuously typed characters (with no erroneous one present, an error will reset the counter). Defaults to 4, which means that current speed callback will be called on every 4 subsequently typed correct characters.
+```javascript
+speedTrackCallback: function(speed){}
+```
+speedTrackCallback allows to define a function which will be called periodically (depending on *speedInterval* parameter) with parameter *speed* which corresponds to typed characters per minute.
+
+## Example
+Example from the picture above:
+
+```html
+	<div id='orig'>
 		<p>this is a text to type</p>
 		<p>it is not too difficult </p>
 		<p>just to test</p>
@@ -35,3 +71,5 @@ Source elements are expected to look like that:
 		});
 	</script>
 ```
+
+
