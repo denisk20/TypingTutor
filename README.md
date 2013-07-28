@@ -35,10 +35,24 @@ speedInterval
 ```
 Determines how frequent current speed snapshots will be made. Counts continuously typed characters (with no erroneous one present, an error will reset the counter). Defaults to 4, which means that current speed callback will be called on every 4 subsequently typed correct characters.
 ```javascript
-speedTrackCallback: function(speed){}
+speedTrackCallback: function(speed){...}
 ```
 speedTrackCallback allows to define a function which will be called periodically (depending on *speedInterval* parameter) with parameter *speed* which corresponds to typed characters per minute.
-
+```javascript
+finishCallback: function(averageSpeed){...}
+```
+Callback to be called when a user finishes typing, with average typing speed as a parameter.
+```javascript
+errorCallback: function(errorCount){...}
+```
+Error callback is called when an error is made. Total count of error is passed as a parameter.
+## Restarting
+It is possible to save the result of typingtutor call to a variable and use that variable to restart typing session when desired:
+```javascript
+var t = $('#src, #typingarea').typingtutor();
+...
+t.restart();
+```
 ## Example
 Example from the picture above:
 
