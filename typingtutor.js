@@ -18,7 +18,7 @@
 		var totalCharacters = 0;
 		for (var i = 0; i < lines.length; i++) {
 			lines[i] = $(lines[i]);
-			var lineText = lines[i].text();
+			var lineText = $.trim(lines[i].text());
 			totalCharacters += lineText.length;
 			lines[i][0].innerHTML = '';
 			originalTexts[i] = lineText;
@@ -41,17 +41,30 @@
 		drawCursor(0, 0);
 
 		function drawTextBackground(line, position) {
-			lineLetters[line][position].css('background-color', '#C9FFE0');
+			if (lineLetters[line] && lineLetters[line][position]) {
+				lineLetters[line][position].css('background-color', '#C9FFE0');
+			}
 		}
 		function clearTextBackground(line, position) {
-			lineLetters[line][position].css('background-color', 'white');
+			if (lineLetters[line] && lineLetters[line][position]) {
+				lineLetters[line][position].css('background-color', 'white');
+			}
 		}
 		function drawCursor(line, position) {
-			lineLetters[line][position].css('background-color', 'green');
+			if (lineLetters[line] && lineLetters[line][position]) {
+				lineLetters[line][position].css('background-color', '#C6DEA2');
+			}
 		}
 		function highlightError(line, position) {
-			lineLetters[line][position].css('background-color', 'red');
+			if (lineLetters[line] && lineLetters[line][position]) {
+				lineLetters[line][position].css('background-color', 'red');
+			}
 			clearSpeed();
+			isError = true;
+			ec++;
+			if (eh) {
+				eh.call(this, ec);
+			}
 		}
 		function endsWith(str, suffix) {
 			return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -59,7 +72,7 @@
 		function getLines() {
 			var currentText = textarea.value;
 			var allLines = currentText.split(/\n/g);
-			if($.browser.name = 'msie' && endsWith(currentText, '\n')) {
+			if ($.browser.name = 'msie' && endsWith(currentText, '\n')) {
 				//todo test for ie > 8
 				allLines.push('');
 			}
@@ -89,25 +102,29 @@
 		}
 		var millisInMinute = 1000 * 60;
 		var startTime = null;
-		
+
 		//error count
 		var ec = 0;
 		var eh = settings.errorCallback;
-		
+
+		var isError = false;
 		$(textarea).keypress(function(e) {
-			if(!startTime) {
+			if (!startTime) {
 				startTime = new Date().getTime();
 			}
-			if(e.keyCode === 8 || e.keyCode === 13) {
+			if (e.keyCode === 8 || e.keyCode === 13) {
 				return;
 			}
 
 			//a letter has been typed
 			var lastTypedLine = getLastLine();
 			var currentTypingPosition = lastTypedLine.length;
-			if(currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
+			if (!originalTexts[currentLinePosition]) {
+				return;
+			}
+			if (currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
 				//at the end of the line
-				if(e.which === 32) {
+				if (e.which === 32) {
 					//trigger enter event
 					e.preventDefault();
 					e = new jQuery.Event('keydown');
@@ -118,21 +135,22 @@
 					return;
 				}
 			}
-			if(currentTypingPosition > originalTexts[currentLinePosition].length - 1) {
+			if (currentTypingPosition > originalTexts[currentLinePosition].length - 1) {
 				return;
 			}
-			if(originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
+			if (originalTexts[currentLinePosition].substring(0, currentTypingPosition + 1) === lastTypedLine + String.fromCharCode(e.which)) {
 				//a correct letter is about to be pressed
+				isError = false;
 				drawTextBackground(currentLinePosition, currentTypingPosition);
 				drawCursor(currentLinePosition, currentTypingPosition + 1);
-				if(scb) {
+				if (scb) {
 					//correct date
 					var cd = new Date().getTime();
-					if(lcd) {
+					if (lcd) {
 						//recording current time
 						var t = cd - lcd;
 						tms.push(t);
-						if(tms.length === si) {
+						if (tms.length === si) {
 							//calculate average and call speed feedback
 							var tot = 0;
 							$.each(tms, function(i, val) {
@@ -153,8 +171,8 @@
 				//check if the whole text is typed
 				//at this point we are sure that the typed symbol was correct
 				//if we're at the end of last line - fire 'finishedcallback'
-				if(fcb) {
-					if(originalTexts.length - 1 === currentLinePosition && originalTexts[originalTexts.length - 1].length - 2/*substracting last whitespace*/ === currentTypingPosition) {
+				if (fcb) {
+					if (!isError && originalTexts.length - 1 === currentLinePosition && originalTexts[originalTexts.length - 1].length - 2/*substracting last whitespace*/ === currentTypingPosition) {
 						var time = new Date().getTime() - startTime;
 						var overallSpeed = (totalCharacters / time) * millisInMinute;
 						fcb.call(this, parseInt(overallSpeed));
@@ -167,25 +185,25 @@
 				}
 			} else {
 				highlightError(currentLinePosition, currentTypingPosition);
-				ec++;
-				if(eh){
-					eh.call(this, ec);
-				}
 			}
 		});
 		$(textarea).keydown(function(e) {
-			if(e.keyCode === 8) {
+			if (e.keyCode === 8) {
 				//backspace - unstyle last styled character
 				var lastLine = getLastLine();
 				var currentTypingPosition = lastLine.length;
-				if(currentTypingPosition > 0) {
-					if(currentTypingPosition < originalTexts[currentLinePosition].length) {
+				if (currentTypingPosition > 0) {
+					if (!originalTexts[currentLinePosition]) {
+						return;
+					}
+
+					if (currentTypingPosition < originalTexts[currentLinePosition].length) {
 						clearTextBackground(currentLinePosition, currentTypingPosition);
 					}
-					if(currentTypingPosition > 1) {
-						if(currentTypingPosition - 1 < originalTexts[currentLinePosition].length) {
+					if (currentTypingPosition > 1) {
+						if (currentTypingPosition - 1 < originalTexts[currentLinePosition].length) {
 							clearTextBackground(currentLinePosition, currentTypingPosition - 1);
-							if(originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1)) {
+							if (originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1)) {
 								drawCursor(currentLinePosition, currentTypingPosition - 1);
 							} else {
 								highlightError(currentLinePosition, currentTypingPosition - 2);
@@ -197,25 +215,32 @@
 				} else {
 					//we may have jumped to a previous line
 					//Remove cursor from previous line
-					if(currentLinePosition === 0) {
+					if (currentLinePosition === 0) {
 						//we're at the beginning of the first line
 						return;
 					}
+					if(! originalTexts[currentLinePosition]){
+						return
+					}
+
 					clearTextBackground(currentLinePosition, 0);
 					currentLinePosition--;
 					var currentTypedLine = getLines()[currentLinePosition];
 					currentTypingPosition = currentTypedLine.length + 1; //adding one for space at the end
-					if(originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === currentTypedLine.substring(0, currentTypingPosition - 1)) {
+					if (originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === currentTypedLine.substring(0, currentTypingPosition - 1)) {
 						drawCursor(currentLinePosition, currentTypingPosition - 1);
 					} else {
 						highlightError(currentLinePosition, currentTypingPosition - 2);
 					}
 				}
-			} else if(e.keyCode === 13) {
+			} else if (e.keyCode === 13) {
+				//enter
 				//validate current line
 				var lastLine = getLastLine();
-				if($.trim(originalTexts[currentLinePosition]) !== lastLine) {
-					highlightError(currentLinePosition, lastLine.length - 1);
+				if ($.trim(originalTexts[currentLinePosition]) !== lastLine) {
+					highlightError(currentLinePosition, lastLine.length);
+					e.preventDefault();
+					return;
 				} else {
 					drawTextBackground(currentLinePosition, lastLine.length);
 				}
