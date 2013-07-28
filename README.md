@@ -62,11 +62,11 @@ Example from the picture above:
 		<p>it is not too difficult </p>
 		<p>just to test</p>
 	</div>
-	<textarea id='t' cols="160" rows="6"></textarea>
-	<div id="csp"></div>
-	<div id ="err" style="color: red"></div>
+	<textarea id='t' cols='160' rows='6'></textarea>
+	<div id='csp'></div>
+	<div id ='err' style='color: red'></div>
 	<button id="rst">Restart</button>
-	<script type="text/javascript">
+	<script type='text/javascript'>
 		var tut = $('#orig, #t').typingtutor({
 			speedTrackCallback: function(speed){
 				$('#csp').text('Current speed is ' + speed + ' characters per minute');
