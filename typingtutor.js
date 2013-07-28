@@ -18,7 +18,7 @@
 		var totalCharacters = 0;
 		for (var i = 0; i < lines.length; i++) {
 			lines[i] = $(lines[i]);
-			var lineText = $.trim(lines[i].text());
+			var lineText = $.trim(lines[i].text()).replace(/\t/g, ' ');
 			totalCharacters += lineText.length;
 			lines[i][0].innerHTML = '';
 			originalTexts[i] = lineText;
