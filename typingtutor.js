@@ -285,9 +285,10 @@
 		 * Checks if last line was correct up to currentTypingPosition
 		 */
 		function checkInput(lastLine, currentLinePosition, currentTypingPosition){
-			return originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1);
+			return $.trim(originalTexts[currentLinePosition]).substring(0, currentTypingPosition - 1) === $.trim(lastLine).substring(0, currentTypingPosition - 1);
 		}
 		$(textarea).focus();
+		drawCursor(0, 0);
 		
 		//resulting object
 		var res = {};
