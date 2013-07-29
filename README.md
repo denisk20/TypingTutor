@@ -84,6 +84,9 @@ Example from the picture above:
 			$('#err').text('');
 		});
 	</script>
-```
+```	
+## IE 9 and IE 10 usage:
+ActiveX must be allowed for correct work.
+
 
 
