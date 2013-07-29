@@ -293,6 +293,9 @@
 		//resulting object
 		var res = {};
 		res.restart = function(){
+			$(textarea).unbind('keypress');
+			$(textarea).unbind('keydown');
+			$(textarea).unbind('keyup');
 			//clear backgrounds of all texts
 			$.each(lineLetters, function(i, line){
 				$.each(line, function(j, letter){
