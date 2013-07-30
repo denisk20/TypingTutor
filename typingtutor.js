@@ -204,6 +204,11 @@
 				e.preventDefault();
 				return;
 			}
+			//disable end key, allow only shift+end combo
+			if(e.keyCode === 36 && !e.shiftKey){
+			    e.preventDefault();
+			    return;
+			}
 			if (e.keyCode === 8) {
 				//backspace - unstyle last styled character
 				var lastLine = getLastLine();
@@ -277,7 +282,7 @@
 				clearTextBackground(currentLinePosition, i);
 			}
 			//we don't want to replace errors with cursor
-			if (checkInput(lastLine, currentLinePosition, currentTypingPosition)) {
+			if ((e.ctrlKey || e.shiftKey || e.keyCode === 46) && checkInput(lastLine, currentLinePosition, currentTypingPosition)) {
 				drawCursor(currentLinePosition, currentTypingPosition);
 			}
 			//console.log('KeyUp in: ' + (new Date().getTime() - t1));
@@ -291,7 +296,7 @@
 			var text = $(textarea).val();
 			$(textarea).focus().val('').val(text);
 		}
-		$(textarea).mousedown(moveToEnd);
+		$(textarea).mouseup(moveToEnd);
 
 		/**
 		 * Checks if last line was correct up to currentTypingPosition
@@ -337,7 +342,7 @@
 			$(textarea).keypress(keyPress);
 			$(textarea).keydown(keyDown);
 			$(textarea).keyup(keyUp);
-		}
+		};
 		
 		return res;
 	};
