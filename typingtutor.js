@@ -10,6 +10,7 @@
 		var textarea = this[1];
 		$(textarea).css('resize', 'none');
 		$(textarea).attr('onpaste', 'return false;');
+		$(textarea).attr('oncut', 'return false;');
 
 		var currentLinePosition = 0;
 		var lines = $(text).find('p');
@@ -198,6 +199,11 @@
 			}
 		};
 		var keyDown = function(e) {
+			//skip arrow keys
+			if($.inArray(e.keyCode, [37, 38, 39, 40]) !== -1){
+				e.preventDefault();
+				return;
+			}
 			if (e.keyCode === 8) {
 				//backspace - unstyle last styled character
 				var lastLine = getLastLine();
@@ -280,6 +286,12 @@
 		$(textarea).keypress(keyPress);
 		$(textarea).keydown(keyDown);
 		$(textarea).keyup(keyUp);
+	
+		function moveToEnd() {
+			var text = $(textarea).val();
+			$(textarea).focus().val('').val(text);
+		}
+		$(textarea).mousedown(moveToEnd);
 
 		/**
 		 * Checks if last line was correct up to currentTypingPosition
