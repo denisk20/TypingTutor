@@ -11,6 +11,8 @@
 		$(textarea).css('resize', 'none');
 		$(textarea).attr('onpaste', 'return false;');
 		$(textarea).attr('oncut', 'return false;');
+		//hopefully the browser will support HTML5
+		$(textarea).attr('spellcheck', 'false');
 
 		var currentLinePosition = 0;
 		var lines = $(text).find('p');
