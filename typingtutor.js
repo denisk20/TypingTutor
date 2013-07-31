@@ -328,7 +328,7 @@
 
 			currentLinePosition = 0;
 
-			$(textarea).val('').attr('disabled', false).focus();
+			$(textarea).val('').attr('disabled', false);
 
 			ec = 0;
 
