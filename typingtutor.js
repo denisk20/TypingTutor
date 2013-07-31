@@ -3,7 +3,8 @@
 	$.fn.typingtutor = function(options) {
 		//todo: validate input
 		var settings = $.extend({
-			speedInterval: 4
+			speedInterval: 4,
+			focus: false
 		}, options);
 		//todo: make order independent
 		var text = this[0];
@@ -306,7 +307,9 @@
 		function checkInput(lastLine, currentLinePosition, currentTypingPosition){
 			return $.trim(originalTexts[currentLinePosition]).substring(0, currentTypingPosition - 1) === $.trim(lastLine).substring(0, currentTypingPosition - 1);
 		}
-		$(textarea).focus();
+		if(settings.focus){
+			$(textarea).focus();
+		}
 		drawCursor(0, 0);
 		
 		//resulting object
