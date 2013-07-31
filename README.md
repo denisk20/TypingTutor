@@ -46,6 +46,10 @@ Callback to be called when a user finishes typing, with average typing speed as 
 errorCallback: function(errorCount){...}
 ```
 Error callback is called when an error is made. Total count of error is passed as a parameter.
+```javascript
+focus
+```
+Determines if the text area of this typing tutor should be focused after creation
 ## Restarting
 It is possible to save the result of typingtutor call to a variable and use that variable to restart typing session when desired:
 ```javascript
