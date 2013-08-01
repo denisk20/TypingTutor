@@ -31,7 +31,7 @@ It's a good idea to make textareas (cols and rows attributes) approximately the 
 
 ## Acceptable Options
 ```javascript
-speedInterval
+speedInterval: int
 ```
 Determines how frequent current speed snapshots will be made. Counts continuously typed characters (with no erroneous one present, an error will reset the counter). Defaults to 4, which means that current speed callback will be called on every 4 subsequently typed correct characters.
 ```javascript
@@ -46,6 +46,10 @@ Callback to be called when a user finishes typing, with average typing speed as 
 errorCallback: function(errorCount){...}
 ```
 Error callback is called when an error is made. Total count of error is passed as a parameter.
+```javascript
+focus: boolean
+```
+Determines if the text area of this typing tutor should be focused after creation
 ## Restarting
 It is possible to save the result of typingtutor call to a variable and use that variable to restart typing session when desired:
 ```javascript
