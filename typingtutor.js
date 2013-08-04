@@ -229,8 +229,6 @@
 							clearTextBackground(currentLinePosition, currentTypingPosition - 1);
 							if (originalTexts[currentLinePosition].substring(0, currentTypingPosition - 1) === lastLine.substring(0, currentTypingPosition - 1)) {
 								drawCursor(currentLinePosition, currentTypingPosition - 1);
-							} else {
-								highlightError(currentLinePosition, currentTypingPosition - 2);
 							}
 						}
 					} else {
