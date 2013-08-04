@@ -136,7 +136,7 @@
 			}
 			if (currentTypingPosition >= originalTexts[currentLinePosition].length - 1) {
 				//at the end of the line
-				if (e.which === 32) {
+				if (!isError && e.which === 32) {
 					//trigger enter event
 					e.preventDefault();
 					e = new jQuery.Event('keydown');
