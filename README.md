@@ -89,8 +89,7 @@ Example from the picture above:
 		});
 	</script>
 ```	
-## IE 9 and IE 10 usage:
-ActiveX must be allowed for correct work.
+
 
 
 
