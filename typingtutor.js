@@ -144,6 +144,12 @@
 					$(textarea).trigger(e);
 
 					$(textarea).val($(textarea).val() + '\n');
+					//hack for IE: move cursor to the end:
+					if($.browser.name === 'msie'){
+						var range = $(textarea)[0].createTextRange();
+						range.collapse(false);
+						range.select();
+					}
 					return;
 				}
 			}
