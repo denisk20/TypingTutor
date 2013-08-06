@@ -5,7 +5,7 @@
 		var settings = $.extend({
 			speedInterval: 4,
 			focus: false,
-			backgroundColor: '#ffffff'
+			textBackgroundColor: '#ffffff'
 		}, options);
 		//todo: make order independent
 		var text = this[0];
