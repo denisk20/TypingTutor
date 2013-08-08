@@ -4,8 +4,28 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>A test for typing tutorial</title>
 <script type="text/javascript" src="jquery-1.10.2.js"></script>
+<script type="text/javascript" src="jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="jquery.browser.js"></script>
 <script type="text/javascript" src="typingtutor.js"></script>
+<style type="text/css">
+	#keyboard {
+		background-color: antiquewhite;
+		width: 500px;
+		height: 400px;
+	}
+	#keyboard img {
+		width: 100%;
+		height: 100%;
+	}
+	.ui-resizable-sw {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 30px;
+		height: 30px;
+		background-color: black;
+	}
+</style>
 </head>
 <body>
 	<div id='src'>
@@ -17,6 +37,7 @@
 	<div id="csp"></div>
 	<div id ="err" style="color: red"></div>
 	<button id="rst">Restart</button>
+	<div id="keyboard"><img src="KB_Programmer_Dvorak.png" alt=""></div>
 	<script type="text/javascript">
 		var tut = $('#src, #t').typingtutor({
 			speedTrackCallback: function(speed){
@@ -28,13 +49,18 @@
 			errorCallback: function(errorCount){
 				$('#err').text('Errors: ' + errorCount);
 			},
-			focus: true
+			focus: true,
+			nextKeyCallback: function(keys){
+				console.log(String.fromCharCode(keys));
+			}
 		});
 		$('#rst').click(function(){
 			tut.restart();
 			$('#csp').text('');
 			$('#err').text('');
 		});
+		$('#keyboard').draggable();
+		$('#keyboard').resizable({ handles: "sw" });
 	</script>
 </body>
 </html>

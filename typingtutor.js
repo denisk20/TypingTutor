@@ -42,8 +42,6 @@
 
 		$(text).css('font-family', '"Courier New", Courier, monospace');
 
-		drawCursor(0, 0);
-
 		var textBgColor = 'rgb(201, 255, 224)';
 		var whiteColor = 'rgb(255, 255, 255)';
 		var cursorColor = 'rgb(198, 222, 162)';
@@ -62,6 +60,8 @@
 		function drawCursor(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
 				lineLetters[line][position].css('background-color', cursorColor);
+				//next key callback
+				nextKeyCallback(line, position-1);
 			}
 		}
 		function increaseErrorCount(){
@@ -69,6 +69,9 @@
 			ec++;
 			if (eh) {
 				eh.call(this, ec);
+			}
+			if(settings.nextKeyCallback){
+				settings.nextKeyCallback.call(this, 8);
 			}
 		}
 		function highlightError(line, position) {
@@ -120,6 +123,23 @@
 		var eh = settings.errorCallback;
 
 		var isError = false;
+		
+		function nextKeyCallback(currentLinePosition, currentTypingPosition) {
+			if(settings.nextKeyCallback){
+				var currentLineText = originalTexts[currentLinePosition];
+				//next typing position
+				var ntp = currentTypingPosition + 1;
+				if(currentLineText.length > ntp) {
+					if(currentLineText.charAt(ntp) === ' ') {
+						//either whitespace or enter are allowed to move to the next line
+						settings.nextKeyCallback.call(this, 13, 32);
+					} else {
+						settings.nextKeyCallback.call(this, currentLineText.charCodeAt(ntp));
+					}
+				}
+			}
+		}
+		
 		var keyPress = function(e) {
 			if (!startTime) {
 				startTime = new Date().getTime();
@@ -207,7 +227,7 @@
 				e.preventDefault();
 				return;
 			}
-			//disable end key, allow only shift+end combo
+			//disable home key, allow only shift+home combo
 			if(e.keyCode === 36 && !e.shiftKey){
 			    e.preventDefault();
 			    return;
