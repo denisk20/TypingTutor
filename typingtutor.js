@@ -121,6 +121,7 @@
 
 		//error count
 		var ec = 0;
+		//error handler
 		var eh = settings.errorCallback;
 
 		var isError = false;
@@ -131,7 +132,7 @@
 				//next typing position
 				var ntp = currentTypingPosition + 1;
 				if(currentLineText.length > ntp) {
-					if(currentLineText.charAt(ntp) === ' ') {
+					if(currentLineText.charAt(ntp) === ' ' && ntp === currentLineText.length - 1) {
 						//either whitespace or enter are allowed to move to the next line
 						settings.nextKeyCallback.call(this, 13, 32);
 					} else {

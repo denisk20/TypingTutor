@@ -7,10 +7,11 @@
 <script type="text/javascript" src="jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="jquery.browser.js"></script>
 <script type="text/javascript" src="typingtutor.js"></script>
+<script type="text/javascript" src="KB_Programmer_Dvorak.keymap.js"></script>
 <style type="text/css">
 	#keyboard {
 		background-color: antiquewhite;
-		width: 500px;
+		width: 900px;
 		height: 400px;
 	}
 	#keyboard img {
@@ -24,6 +25,10 @@
 		width: 30px;
 		height: 30px;
 		background-color: black;
+	}
+	.key-marker {
+		position: absolute;
+		border: 5px solid red;
 	}
 </style>
 </head>
@@ -39,6 +44,7 @@
 	<button id="rst">Restart</button>
 	<div id="keyboard"><img src="KB_Programmer_Dvorak.png" alt=""></div>
 	<script type="text/javascript">
+		var keyMark = $('<div class="key-marker"></div>').appendTo($('#keyboard'));
 		var tut = $('#src, #t').typingtutor({
 			speedTrackCallback: function(speed){
 				$('#csp').text('Current speed is ' + speed + ' characters per minute');
@@ -51,7 +57,20 @@
 			},
 			focus: true,
 			nextKeyCallback: function(keys){
-				console.log(String.fromCharCode(keys));
+				if(!$.isArray(keys)){
+					keys = [keys];
+				}
+				$.each(keys, function(i, key){
+					var coords = PROGRAMMER_DVORAK_KEYMAP[key];
+					if(coords){
+						var w = $('#keyboard').width();
+						var h = $('#keyboard').height();
+						keyMark.css('left', coords.x1 + '%');
+						keyMark.css('top', coords.y1 + '%');
+						keyMark.width((coords.x2 - coords.x1) + '%');
+						keyMark.height((coords.y2 - coords.y1) + '%');
+					}
+				});
 			},
 			textBackgroundColor: 'white'
 		});
@@ -61,7 +80,18 @@
 			$('#err').text('');
 		});
 		$('#keyboard').draggable();
-		$('#keyboard').resizable({ handles: "sw" });
+		$('#keyboard').resizable({ handles: "sw", aspectRatio: true });
+		$('#keyboard').click(function(e){
+			var w = $(this).width();
+			var h = $(this).height();
+			
+			var x = e.offsetX;
+			var y = e.offsetY;
+			
+			var xP = parseFloat((x/w)*100).toFixed(2);
+			var yP = parseFloat((y/h)*100).toFixed(2);
+			console.log(xP + ' '+ yP);
+		})
 	</script>
 </body>
 </html>
