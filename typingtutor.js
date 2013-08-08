@@ -4,7 +4,8 @@
 		//todo: validate input
 		var settings = $.extend({
 			speedInterval: 4,
-			focus: false
+			focus: false,
+			textBackgroundColor: '#ffffff'
 		}, options);
 		//todo: make order independent
 		var text = this[0];
@@ -42,10 +43,10 @@
 
 		$(text).css('font-family', '"Courier New", Courier, monospace');
 
-		var textBgColor = 'rgb(201, 255, 224)';
-		var whiteColor = 'rgb(255, 255, 255)';
-		var cursorColor = 'rgb(198, 222, 162)';
-		var errorColor = 'rgb(255, 97, 136)';
+		var textBgColor = '#c9ffe0';
+		
+		var cursorColor = '#c6dea2';
+		var errorColor = '#ff6188';
 		
 		function drawTextBackground(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
@@ -54,7 +55,7 @@
 		}
 		function clearTextBackground(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
-				lineLetters[line][position].css('background-color', whiteColor);
+				lineLetters[line][position].css('background-color', settings.textBackgroundColor);
 			}
 		}
 		function drawCursor(line, position) {
@@ -164,6 +165,12 @@
 					$(textarea).trigger(e);
 
 					$(textarea).val($(textarea).val() + '\n');
+					//hack for IE: move cursor to the end:
+					if($.browser.name === 'msie'){
+						var range = $(textarea)[0].createTextRange();
+						range.collapse(false);
+						range.select();
+					}
 					return;
 				}
 			}
@@ -339,7 +346,7 @@
 			//clear backgrounds of all texts
 			$.each(lineLetters, function(i, line){
 				$.each(line, function(j, letter){
-					letter.css('background-color', whiteColor);
+					letter.css('background-color', settings.textBackgroundColor);
 				});
 			});
 			drawCursor(0, 0);
