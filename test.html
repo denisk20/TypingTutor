@@ -13,6 +13,7 @@
 		background-color: antiquewhite;
 		width: 900px;
 		height: 400px;
+                display: none;
 	}
 	#keyboard img {
 		width: 100%;
@@ -42,8 +43,17 @@
 	<div id="csp"></div>
 	<div id ="err" style="color: red"></div>
 	<button id="rst">Restart</button>
+        <button id="showKeyboard">Show keyboard</button>
 	<div id="keyboard"><img src="KB_Programmer_Dvorak.png" alt=""></div>
 	<script type="text/javascript">
+            jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+                                                $(window).scrollTop()) + "px");
+    this.css("right", "0");
+    this.css("left", "auto");
+    return this;
+}
 		var keyMark = $('<div class="key-marker"></div>').appendTo($('#keyboard'));
 		var tut = $('#src, #t').typingtutor({
 			speedTrackCallback: function(speed){
@@ -75,23 +85,30 @@
 			textBackgroundColor: 'white'
 		});
 		$('#rst').click(function(){
-			tut.restart();
+			tut.restart();Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+                                                $(window).scrollLeft()) + "px"
 			$('#csp').text('');
 			$('#err').text('');
 		});
 		$('#keyboard').draggable();
 		$('#keyboard').resizable({ handles: "sw", aspectRatio: true });
-		$('#keyboard').click(function(e){
-			var w = $(this).width();
-			var h = $(this).height();
-			
-			var x = e.offsetX;
-			var y = e.offsetY;
-			
-			var xP = parseFloat((x/w)*100).toFixed(2);
-			var yP = parseFloat((y/h)*100).toFixed(2);
-			console.log(xP + ' '+ yP);
-		})
+                $('#showKeyboard').click(function(){
+                    if($(this).text().indexOf('Hide') >= 0){
+                        $('#keyboard').hide();
+                        $(this).text("Show keyboard");
+                        var that = this;
+                        $('.show-keyboard').each(function(item){
+                            if(item !== this){
+                            }
+                        });
+                    } else {
+                        $('#keyboard').center();
+                        $('#keyboard').show();
+                        $(this).attr("shown", "1");
+                        $(this).text("Hide keyboard");
+                        
+                    }
+                });
 	</script>
 </body>
 </html>
