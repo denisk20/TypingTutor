@@ -43,7 +43,9 @@
 	<div id="csp"></div>
 	<div id ="err" style="color: red"></div>
 	<button id="rst">Restart</button>
-        <button id="showKeyboard">Show keyboard</button>
+	<button id="one" class="show-keyboard">Show keyboard</button>
+	<div style="width: 10px; height: 500px"></div>
+	<button id="two" class="show-keyboard">Show keyboard</button>
 	<div id="keyboard"><img src="KB_Programmer_Dvorak.png" alt=""></div>
 	<script type="text/javascript">
             jQuery.fn.center = function () {
@@ -53,6 +55,17 @@
     this.css("right", "0");
     this.css("left", "auto");
     return this;
+}
+function highlightChar(key){
+					var coords = PROGRAMMER_DVORAK_KEYMAP[key];
+					if(coords){
+						var w = $('#keyboard').width();
+						var h = $('#keyboard').height();
+						keyMark.css('left', coords.x1 + '%');
+						keyMark.css('top', coords.y1 + '%');
+						keyMark.width((coords.x2 - coords.x1) + '%');
+						keyMark.height((coords.y2 - coords.y1) + '%');
+					}
 }
 		var keyMark = $('<div class="key-marker"></div>').appendTo($('#keyboard'));
 		var tut = $('#src, #t').typingtutor({
@@ -71,15 +84,7 @@
 					keys = [keys];
 				}
 				$.each(keys, function(i, key){
-					var coords = PROGRAMMER_DVORAK_KEYMAP[key];
-					if(coords){
-						var w = $('#keyboard').width();
-						var h = $('#keyboard').height();
-						keyMark.css('left', coords.x1 + '%');
-						keyMark.css('top', coords.y1 + '%');
-						keyMark.width((coords.x2 - coords.x1) + '%');
-						keyMark.height((coords.y2 - coords.y1) + '%');
-					}
+					highlightChar(key);
 				});
 			},
 			textBackgroundColor: 'white'
@@ -92,21 +97,21 @@
 		});
 		$('#keyboard').draggable();
 		$('#keyboard').resizable({ handles: "sw", aspectRatio: true });
-                $('#showKeyboard').click(function(){
+                $('.show-keyboard').click(function(){
                     if($(this).text().indexOf('Hide') >= 0){
                         $('#keyboard').hide();
                         $(this).text("Show keyboard");
-                        var that = this;
-                        $('.show-keyboard').each(function(item){
-                            if(item !== this){
-                            }
-                        });
                     } else {
+						highlightChar(tut.nextKeys);
                         $('#keyboard').center();
                         $('#keyboard').show();
-                        $(this).attr("shown", "1");
                         $(this).text("Hide keyboard");
-                        
+                        var that = this;
+                        $('.show-keyboard').each(function(i, item){
+                            if(item !== that){
+								$(item).text('Show keyboard');
+                            }
+                        });
                     }
                 });
 	</script>

@@ -125,7 +125,10 @@
 		var eh = settings.errorCallback;
 
 		var isError = false;
-		
+
+		//resulting object
+		var res = {};
+
 		function nextKeyCallback(currentLinePosition, currentTypingPosition) {
 			if(settings.nextKeyCallback){
 				var currentLineText = originalTexts[currentLinePosition];
@@ -135,8 +138,11 @@
 					if(currentLineText.charAt(ntp) === ' ' && ntp === currentLineText.length - 1) {
 						//either whitespace or enter are allowed to move to the next line
 						settings.nextKeyCallback.call(this, 13, 32);
+						res.nextKeys = [13, 32];
 					} else {
-						settings.nextKeyCallback.call(this, currentLineText.charCodeAt(ntp));
+						var next = currentLineText.charCodeAt(ntp);
+						settings.nextKeyCallback.call(this, next);
+						res.nextKeys = next;
 					}
 				}
 			}
@@ -338,8 +344,6 @@
 		}
 		drawCursor(0, 0);
 		
-		//resulting object
-		var res = {};
 		res.restart = function(){
 			$(textarea).unbind('keypress');
 			$(textarea).unbind('keydown');
