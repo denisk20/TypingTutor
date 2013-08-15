@@ -138,7 +138,7 @@
 				if(currentLineText.length > ntp) {
 					if(currentLineText.charAt(ntp) === ' ' && ntp === currentLineText.length - 1) {
 						//either whitespace or enter are allowed to move to the next line
-						settings.nextKeyCallback.call(this, 13, 32);
+						settings.nextKeyCallback.call(this, [13, 32]);
 						res.nextKeys = [13, 32];
 					} else {
 						var next = currentLineText.charCodeAt(ntp);
