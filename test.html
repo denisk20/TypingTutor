@@ -8,30 +8,6 @@
 <script type="text/javascript" src="jquery.browser.js"></script>
 <script type="text/javascript" src="typingtutor.js"></script>
 <script type="text/javascript" src="KB_Programmer_Dvorak.keymap.js"></script>
-<style type="text/css">
-	#keyboard {
-		background-color: antiquewhite;
-		width: 900px;
-		height: 400px;
-                display: none;
-	}
-	#keyboard img {
-		width: 100%;
-		height: 100%;
-	}
-	.ui-resizable-sw {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		width: 30px;
-		height: 30px;
-		background-color: black;
-	}
-	.key-marker {
-		position: absolute;
-		border: 5px solid red;
-	}
-</style>
 </head>
 <body>
 	<div id='src'>
@@ -43,31 +19,7 @@
 	<div id="csp"></div>
 	<div id ="err" style="color: red"></div>
 	<button id="rst">Restart</button>
-	<button id="one" class="show-keyboard">Show keyboard</button>
-	<div style="width: 10px; height: 500px"></div>
-	<button id="two" class="show-keyboard">Show keyboard</button>
-	<div id="keyboard"><img src="KB_Programmer_Dvorak.png" alt=""></div>
 	<script type="text/javascript">
-            jQuery.fn.center = function () {
-    this.css("position","absolute");
-    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
-                                                $(window).scrollTop()) + "px");
-    this.css("right", "0");
-    this.css("left", "auto");
-    return this;
-}
-function highlightChar(key){
-					var coords = PROGRAMMER_DVORAK_KEYMAP[key];
-					if(coords){
-						var w = $('#keyboard').width();
-						var h = $('#keyboard').height();
-						keyMark.css('left', coords.x1 + '%');
-						keyMark.css('top', coords.y1 + '%');
-						keyMark.width((coords.x2 - coords.x1) + '%');
-						keyMark.height((coords.y2 - coords.y1) + '%');
-					}
-}
-		var keyMark = $('<div class="key-marker"></div>').appendTo($('#keyboard'));
 		var tut = $('#src, #t').typingtutor({
 			speedTrackCallback: function(speed){
 				$('#csp').text('Current speed is ' + speed + ' characters per minute');
@@ -80,40 +32,15 @@ function highlightChar(key){
 			},
 			focus: true,
 			nextKeyCallback: function(keys){
-				if(!$.isArray(keys)){
-					keys = [keys];
-				}
-				$.each(keys, function(i, key){
-					highlightChar(key);
-				});
+				console.log('Next key: ' + String.fromCharCode(keys));
 			},
 			textBackgroundColor: 'white'
 		});
 		$('#rst').click(function(){
-			tut.restart();Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
-                                                $(window).scrollLeft()) + "px"
+			tut.restart();
 			$('#csp').text('');
 			$('#err').text('');
 		});
-		$('#keyboard').draggable();
-		$('#keyboard').resizable({ handles: "sw", aspectRatio: true });
-                $('.show-keyboard').click(function(){
-                    if($(this).text().indexOf('Hide') >= 0){
-                        $('#keyboard').hide();
-                        $(this).text("Show keyboard");
-                    } else {
-						highlightChar(tut.nextKeys);
-                        $('#keyboard').center();
-                        $('#keyboard').show();
-                        $(this).text("Hide keyboard");
-                        var that = this;
-                        $('.show-keyboard').each(function(i, item){
-                            if(item !== that){
-								$(item).text('Show keyboard');
-                            }
-                        });
-                    }
-                });
 	</script>
 </body>
 </html>
