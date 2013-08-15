@@ -48,6 +48,9 @@
 		var cursorColor = '#c6dea2';
 		var errorColor = '#ff6188';
 		
+		//resulting object
+		var res = {};
+
 		function drawTextBackground(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
 				lineLetters[line][position].css('background-color', textBgColor);
@@ -81,6 +84,7 @@
 			}
 			clearSpeed();
 			increaseErrorCount();
+			res.nextKeys = 8;
 		}
 		function endsWith(str, suffix) {
 			return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -125,9 +129,6 @@
 		var eh = settings.errorCallback;
 
 		var isError = false;
-
-		//resulting object
-		var res = {};
 
 		function nextKeyCallback(currentLinePosition, currentTypingPosition) {
 			if(settings.nextKeyCallback){
