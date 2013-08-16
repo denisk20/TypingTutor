@@ -235,7 +235,6 @@
 			}
 		};
 		var keyDown = function(e) {
-			console.log(e.which)
 			//skip arrow keys
 			if($.inArray(e.keyCode, [37, 38, 39, 40]) !== -1){
 				e.preventDefault();
