@@ -4,6 +4,8 @@ JQuery plugin which allows to create typing tutor UI:
 
 ![TypingTutor](http://s14.postimg.org/x9q5aimvl/type.png)
 
+Powers http://programmer-dvorak.appspot.com/
+
 Tested on jQuery 1.10.2, but should work on earlier versions as well.
 
 Depends on [jquer.browser.js](http://jquery.thewikies.com/browser)
