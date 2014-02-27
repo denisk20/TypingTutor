@@ -378,6 +378,7 @@
 			$(textarea).keypress(keyPress);
 			$(textarea).keydown(keyDown);
 			$(textarea).keyup(keyUp);
+			$(textarea).focus();
 		};
 		
 		return res;
