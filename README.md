@@ -30,6 +30,7 @@ A typing area should be a simple textarea:
 <textarea id='typingarea' cols='100' rows='6'></textarea>
 ```
 It's a good idea to make textareas (cols and rows attributes) approximately the same size as input text size.
+In order to move the focus to the typing area right after creation use `focus: true` parameter
 
 ## Acceptable Options
 ```javascript
@@ -59,6 +60,13 @@ var t = $('#src, #typingarea').typingtutor();
 ...
 t.restart();
 ```
+## Manually passing focus to typingtutor's text area
+Just call `focus()` function of typingtutor variable:
+```javascript
+var t = $('#src, #typingarea').typingtutor();
+...
+t.focus();
+```
 ## Example
 Example from the picture above:
 
@@ -74,6 +82,7 @@ Example from the picture above:
 	<button id="rst">Restart</button>
 	<script type='text/javascript'>
 		var tut = $('#orig, #t').typingtutor({
+			speedInterval: 5,
 			speedTrackCallback: function(speed){
 				$('#csp').text('Current speed is ' + speed + ' characters per minute');
 			},
@@ -82,7 +91,8 @@ Example from the picture above:
 			},
 			errorCallback: function(errorCount){
 				$('#err').text('Errors: ' + errorCount);
-			}
+			},
+			focus: true
 		});
 		$('#rst').click(function(){
 			tut.restart();

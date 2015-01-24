@@ -380,7 +380,11 @@
 			$(textarea).keyup(keyUp);
 			$(textarea).focus();
 		};
-		
+
+		res.focus = function() {
+			$(textarea).focus();
+		};
+
 		return res;
 	};
 }(jQuery));
