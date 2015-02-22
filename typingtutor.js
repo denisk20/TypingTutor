@@ -306,7 +306,6 @@
 			}
 		};
 		var keyUp = function(e){
-			//var t1 = new Date().getTime();
 			//clear backgrounds of of all characters which are beyond current typing point
 			var lastLine = getLastLine();
 			var currentTypingPosition = lastLine.length;
@@ -317,11 +316,14 @@
 			for(var i = currentTypingPosition + 1; i < lineLetters[currentLinePosition].length; i++){
 				clearTextBackground(currentLinePosition, i);
 			}
-			//we don't want to replace errors with cursor
-			if ((e.ctrlKey || e.shiftKey || e.keyCode === 46) && checkInput(lastLine, currentLinePosition, currentTypingPosition)) {
+
+			/**
+			 * If true then CTRL(SHIFT)+BACKSPACE deletion has been performed.
+			 */
+			var bulkDeleteWithBackspace = (e.keyCode == 8 && (e.ctrlKey || e.shiftKey));
+			if ((bulkDeleteWithBackspace || e.keyCode === 46) && checkInput(lastLine, currentLinePosition, currentTypingPosition)) {
 				drawCursor(currentLinePosition, currentTypingPosition);
 			}
-			//console.log('KeyUp in: ' + (new Date().getTime() - t1));
 		};
 
 		$(textarea).keypress(keyPress);
