@@ -1,8 +1,7 @@
 # TypingTutor
 
-JQuery plugin which allows to create typing tutor UI:
+JQuery plugin which allows to create typing tutor UI.
 
-![TypingTutor](http://s14.postimg.org/x9q5aimvl/type.png)
 
 Powers http://programmer-dvorak.appspot.com/
 
@@ -90,7 +89,6 @@ t.focus();
 ```
 
 ## Example
-Example from the picture above:
 
 ```html
 <div id='orig'>
