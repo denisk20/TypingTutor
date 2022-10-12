@@ -5,7 +5,8 @@
 		var settings = $.extend({
 			speedInterval: 4,
 			focus: false,
-			textBackgroundColor: '#ffffff'
+			textBackgroundColor: '#ffffff',
+			showInvalidText: false
 		}, options);
 		//todo: make order independent
 		var text = this[0];
@@ -61,6 +62,9 @@
 				lineLetters[line][position].css('background-color', settings.textBackgroundColor);
 			}
 		}
+		function resetLetterAt(line, position) {
+			lineLetters[line][position].text(originalTexts[line][position]);
+		}
 		function drawCursor(line, position) {
 			if (lineLetters[line] && lineLetters[line][position]) {
 				lineLetters[line][position].css('background-color', cursorColor);
@@ -80,8 +84,11 @@
 				settings.nextKeyCallback.call(this, 8);
 			}
 		}
-		function highlightError(line, position) {
+		function highlightError(line, position, letter) {
 			if (lineLetters[line] && lineLetters[line][position]) {
+				if (settings.showInvalidText && $.trim(letter).length > 0) {
+					lineLetters[line][position].text(letter);
+				}
 				lineLetters[line][position].css('background-color', errorColor);
 			}
 			clearSpeed();
@@ -233,7 +240,7 @@
 					}
 				}
 			} else {
-				highlightError(currentLinePosition, currentTypingPosition);
+				highlightError(currentLinePosition, currentTypingPosition, String.fromCharCode(e.which));
 			}
 		};
 		var keyDown = function(e) {
@@ -258,6 +265,9 @@
 
 					if (currentTypingPosition < originalTexts[currentLinePosition].length) {
 						clearTextBackground(currentLinePosition, currentTypingPosition);
+					}
+					if (settings.showInvalidText) {
+						resetLetterAt(currentLinePosition, currentTypingPosition - 1);
 					}
 					if (currentTypingPosition > 1) {
 						if (currentTypingPosition - 1 < originalTexts[currentLinePosition].length) {
@@ -287,7 +297,7 @@
 					if (checkInput(currentTypedLine, currentLinePosition, currentTypingPosition)) {
 						drawCursor(currentLinePosition, currentTypingPosition - 1);
 					} else {
-						highlightError(currentLinePosition, currentTypingPosition - 2);
+						highlightError(currentLinePosition, currentTypingPosition - 2, String.fromCharCode(e.which));
 					}
 				}
 			} else if (e.keyCode === 13) {
@@ -295,7 +305,7 @@
 				//validate current line
 				var lastLine = getLastLine();
 				if ($.trim(originalTexts[currentLinePosition]) !== lastLine) {
-					highlightError(currentLinePosition, lastLine.length);
+					highlightError(currentLinePosition, lastLine.length, String.fromCharCode(e.which));
 					e.preventDefault();
 					return;
 				} else {
